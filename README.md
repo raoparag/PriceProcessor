@@ -1,13 +1,16 @@
 # PriceProcessor
 
 ### Compile using
-"mvn compile"
+`mvn compile`
+
+### Run Tests using
+`mvn test`
 
 ### Package using
-"mvn package"
+`mvn package`
 
 ### Run using
-"java -jar PriceProcessor-0.1.0.jar"
+`java -jar PriceProcessor-0.1.0.jar`
 
 
 ### Uses data from file data/data.txt
