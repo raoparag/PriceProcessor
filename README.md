@@ -1,10 +1,10 @@
 # PriceProcessor
 
 Compile using
-mvn compile
+"mvn compile"
 
 Package using
-mvn package
+"mvn package"
 
 Run using
-java -jar PriceProcessor-0.1.0.jar
+"java -jar PriceProcessor-0.1.0.jar"
