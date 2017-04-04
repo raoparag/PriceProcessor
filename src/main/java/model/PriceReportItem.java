@@ -44,9 +44,9 @@ public class PriceReportItem {
     @Override
     public String toString() {
         return ticker +
-                "\t\t\t" + instrument +
-                "\t\t\t\t" + secondHighPrice +
-                "\t\t\t\t\t\t" + avgPrice10Sec;
+                "\t\t" + instrument +
+                "\t\t\t" + ((secondHighPrice == -1) ? "Not enough data" : secondHighPrice) +
+                "\t\t\t\t\t\t" + ((avgPrice10Sec == -1) ? "No data" : avgPrice10Sec);
     }
 
     public PriceReportItem() {
@@ -59,3 +59,4 @@ public class PriceReportItem {
         this.avgPrice10Sec = avgPrice10Sec;
     }
 }
+

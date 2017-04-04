@@ -1,18 +1,17 @@
-package ds;
+package db;
 
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-
-import javax.sql.DataSource;
 
 /**
  * Created by parag on 4/3/17.
  */
-public class PriceDataSource {
-    private static DataSource ds = null;
+public class PriceDatabase {
+    private static EmbeddedDatabase db = null;
 
     public static void setup() {
-        ds = new EmbeddedDatabaseBuilder()
+        db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.HSQL)
                 .setScriptEncoding("UTF-8")
                 .ignoreFailedDrops(true)
@@ -20,8 +19,13 @@ public class PriceDataSource {
                 .build();
     }
 
-    public static DataSource get() {
-        if (ds == null) setup();
-        return ds;
+    public static EmbeddedDatabase get() {
+        if (db == null) setup();
+        return db;
+    }
+
+    public static void shutdown(){
+        db.shutdown();
     }
 }
+
