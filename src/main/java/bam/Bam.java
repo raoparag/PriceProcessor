@@ -16,8 +16,7 @@ import java.util.stream.Stream;
 public class Bam {
     private static final Logger logger = LoggerFactory.getLogger(Bam.class);
     private static final String fileName = "/Users/parag/work/workspaces/PriceProcessor/src/main/resources/inputData.csv";
-    private static final long maxEquiFreq = 6;
-    private static final int dataSetSize = 20;
+    private static final int dataSetSize = 30;
 
     public static void main(String[] args) {
         try {
@@ -28,38 +27,50 @@ public class Bam {
     }
 
     private static void findBestEquiFreq() throws IOException {
-        List<String> ticketList;
+        List<String> sampleTicketList, maxEquiFreqTicketList, allTicketsList, validationTicketNumbers;
+        long maxEquiFreq;
         List<String> numberList = new ArrayList<>();
-        Stream<String> lines = Files.lines(Paths.get(fileName));
-        ticketList = lines.limit(dataSetSize + 1).collect(Collectors.toList());
-        List<String> testTicket = Arrays.asList(ticketList.get(0).split(","));
-
         List<String> luckyNumbers = new ArrayList<>();
 
-        for (Long equiFreq = 0L; equiFreq < maxEquiFreq; equiFreq++) {
+        Stream<String> lines = Files.lines(Paths.get(fileName));
+        allTicketsList = lines.collect(Collectors.toList());
+
+        for (int i = allTicketsList.size() - dataSetSize; i >= 0; i--) {
+            validationTicketNumbers = Arrays.asList(allTicketsList.get(i).split(","));
+
             numberList.clear();
-            luckyNumbers.clear();
-
-            ticketList.subList(1, ticketList.size() - Math.toIntExact(maxEquiFreq - equiFreq)).forEach(line -> {
-                numberList.addAll(Arrays.asList(line.split(",")));
-            });
+            maxEquiFreqTicketList = allTicketsList.subList(i, i + dataSetSize);
+            maxEquiFreqTicketList.forEach(line -> numberList.addAll(Arrays.asList(line.split(","))));
             Map<String, Long> numberFreqMap = numberList.stream().collect(Collectors.groupingBy(item -> item, Collectors.counting()));
-            final Long equiFreqFinal = equiFreq;
-            numberFreqMap.forEach((ticketNumber, numberFreq) -> {
-                if (numberFreq.equals(equiFreqFinal)) luckyNumbers.add(ticketNumber);
-            });
+            maxEquiFreq = numberFreqMap.entrySet().stream().max((entry1, entry2) -> Math.toIntExact(entry1.getValue() - entry2.getValue())).get().getValue();
 
-            //calculating the equi Freq efficiency
-            long positiveCounter = 0, efficiency;
-            if (luckyNumbers.size() == 0)
-                efficiency = 0;
-            else {
-                positiveCounter = luckyNumbers.stream().filter(testTicket::contains).count();
-                efficiency = positiveCounter * 100 / luckyNumbers.size();
+            numberList.clear();
+            sampleTicketList = allTicketsList.subList(i + 1, i + dataSetSize);
+            sampleTicketList.forEach(line -> numberList.addAll(Arrays.asList(line.split(","))));
+            numberFreqMap = numberList.stream().collect(Collectors.groupingBy(item -> item, Collectors.counting()));
+
+            logger.debug("sample tickets from {} to {} with maxEquiFreq {}", i, i + dataSetSize, maxEquiFreq);
+
+            for (Long equiFreq = 1L; equiFreq <= maxEquiFreq; equiFreq++) {
+                luckyNumbers.clear();
+
+                final Long equiFreqFinal = equiFreq;
+                numberFreqMap.forEach((ticketNumber, numberFreq) -> {
+                    if (numberFreq.equals(equiFreqFinal)) luckyNumbers.add(ticketNumber);
+                });
+
+                //calculating the equi Freq efficiency
+                long positiveCounter = 0;
+                double efficiency;
+                if (luckyNumbers.size() == 0)
+                    efficiency = 0;
+                else {
+                    positiveCounter = luckyNumbers.stream().filter(validationTicketNumbers::contains).count();
+                    efficiency = positiveCounter * 100.0 / luckyNumbers.size();
+                }
+
+                logger.debug("equiFreq = {}, positiveCounter = {}, luckyNumbers.size() = {}, efficiency = {}", equiFreq, positiveCounter, luckyNumbers.size(), efficiency);
             }
-
-            logger.debug("equiFreq = {}, positiveCounter = {}, luckyNumbers.size() = {}, efficiency = {}", equiFreq, positiveCounter, luckyNumbers.size(), efficiency);
         }
-        logger.debug("testing");
     }
 }
