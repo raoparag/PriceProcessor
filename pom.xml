@@ -9,7 +9,7 @@
     <properties>
         <jdk.version>1.8</jdk.version>
         <spring.version>4.1.6.RELEASE</spring.version>
-        <hsqldb.version>2.3.4</hsqldb.version>
+        <hsqldb.version>2.7.1</hsqldb.version>
         <logback.version>1.2.3</logback.version>
         <jcl.slf4j.version>1.7.25</jcl.slf4j.version>
     </properties>
